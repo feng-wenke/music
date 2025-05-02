@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <style>
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            background-color: #fff; /* 默认背景颜色 */
+            color: #000; /* 黑色字体 */
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .music-player {
+            max-width: 600px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .music-player::before {
+            content: '';
+            display: block;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+            background-color: #95adad;
+            border-radius: 50%;
+            position: relative;
+            z-index: -1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        audio {
+            width: 200px;
+            border-radius: 50%;
+            outline: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background-color: #80876a;
+            padding: 20px;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        .controls button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 0 5px;
+            background-color: #433f3f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .controls button:hover {
+            background-color: #666;
+        }
+        
+        .track-info {
+            margin-top: 50px;
+        }
+        
+        .track-info h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .track-info p {
+            font-size: 16px;
+            color: #b7aaaa;
+        }
+        
+        .progress-container {
+            width: 80%;
+            margin: 20px auto;
+            height: 4px;
+            background-color: #555;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            cursor: pointer;
+        }
+
+        /* 媒体查询，针对小屏幕设备 */
+        @media (max-width: 768px) {
+            .music-player::before {
+                width: 200px;
+                height: 200px;
+            }
+            
+            audio {
+                width: 150px;
+                padding: 15px;
+            }
+            
+            .controls button {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            .track-info h2 {
+                font-size: 20px;
+            }
+            
+            .track-info p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Music Player</h1>
+
+    <div class="music-player">
+        <audio id="audioPlayer" controls>
+            <source src="不问别离.mp3" type="audio/mpeg">
+            <source src="人间惊鸿客.mp3" type="audio/mpeg">
+            <source src="半壶纱.mp3" type="audio/mpeg">
+           <source src="天下.mp3" type="audio/mpeg">
+           <source src="晚夜微雨问海棠.mp3" type="audio/mpeg">
+           <source src="精卫.mp3" type="audio/mpeg">
+            您的浏览器不支持 audio 元素。
+        </audio>
+        <div class="controls">
+            <button onclick="previousTrack()">Previous</button>
+            <button class="play-button" id="playButton">Play</button>
+            <button onclick="nextTrack()">Next</button>
+        </div>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="track-info">
+        <h2 id="trackTitle">歌曲名称</h2>
+        <p>这是一首非常好听的歌曲，由著名歌手演唱，收录在最新的专辑中。</p>
+    </div>
+
+     <script>
+        const tracks = [{
+            title: "不问别离",
+            file: "不问别离.mp3"
+        }, {
+            title: "人间惊鸿客",
+            file: "人间惊鸿客.mp3"
+        }, {
+            title: "半壶纱",
+            file: "半壶纱.mp3"
+        }, {
+            title: "天下",
+            file: "天下.mp3"
+        }, {
+            title: "晚夜微雨问海棠",
+            file: "晚夜微雨问海棠.mp3"
+        }, {
+            title: "精卫",
+            file: "精卫.mp3"
+        }];
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+
+        const audioPlayer = document.getElementById('audioPlayer');
+        const trackTitle = document.getElementById('trackTitle');
+        const playButton = document.getElementById('playButton');
+
+        function loadTrack(index) {
+            audioPlayer.src = tracks[index].file;
+            trackTitle.textContent = tracks[index].title;
+            currentTrackIndex = index;
+        }
+
+        function nextTrack() {
+            let randomIndex = Math.floor(Math.random() * tracks.length);
+            while (randomIndex === currentTrackIndex) {
+                randomIndex = Math.floor(Math.random() * tracks.length);
+            }
+            loadTrack(randomIndex);
+            audioPlayer.play();
+        }
+
+        function previousTrack() {
+            if (currentTrackIndex > 0) {
+                loadTrack(currentTrackIndex - 1);
+                audioPlayer.play();
+            } else {
+                loadTrack(tracks.length - 1);
+                audioPlayer.play();
+            }
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                audioPlayer.pause();
+                playButton.textContent = 'Play';
+            } else {
+                audioPlayer.play();
+                playButton.textContent = 'Pause';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        audioPlayer.addEventListener('timeupdate', function() {
+            const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+        });
+
+        audioPlayer.addEventListener('ended', function() {
+            nextTrack();
+        });
+
+        document.getElementById('progressContainer').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            audioPlayer.currentTime = pos * audioPlayer.duration;
+        });
+
+        window.onload = function() {
+            // 指定的入口页面URL
+            var entryPageUrl = "https://homepage.328249.xyz/"; // 替换为实际的入口页面URL
+
+            // 检查referrer是否为指定的入口页面
+            if (document.referrer !== entryPageUrl && !isRefresh()) {
+                // 如果不是，重定向到入口页面
+                window.location.href = "https://login.328249.xyz/";
+            }
+
+            // 加载默认曲目
+            loadTrack(currentTrackIndex);
+        };
+
+        playButton.addEventListener('click', function() {
+            togglePlay();
+        });
+
+        // 检查是否是通过刷新进入的
+        function isRefresh() {
+            // 检查performance.navigation类型
+            return performance.navigation.type === 1;
+        };
+    </script>
+</body>
+
+</html>
