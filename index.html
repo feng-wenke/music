@@ -8,8 +8,10 @@
     <style>
         body {
             font-family: 'Open Sans', Arial, sans-serif;
-            background-color: #fff; /* 默认背景颜色 */
-            color: #000; /* 黑色字体 */
+            background-color: #fff;
+            /* 默认背景颜色 */
+            color: #000;
+            /* 黑色字体 */
             text-align: center;
             padding: 20px;
             margin: 0;
@@ -88,38 +90,50 @@
             background-color: #555;
             position: relative;
         }
-
+        
         .progress-bar {
             height: 100%;
             background-color: #4CAF50;
             width: 0%;
             cursor: pointer;
         }
-
         /* 媒体查询，针对小屏幕设备 */
+        
         @media (max-width: 768px) {
             .music-player::before {
                 width: 200px;
                 height: 200px;
             }
-            
             audio {
                 width: 150px;
                 padding: 15px;
             }
-            
             .controls button {
                 padding: 8px 15px;
                 font-size: 14px;
             }
-            
             .track-info h2 {
                 font-size: 20px;
             }
-            
             .track-info p {
                 font-size: 14px;
             }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .play-button {
+            animation: pulse 0.5s ease;
         }
     </style>
 </head>
@@ -129,12 +143,12 @@
 
     <div class="music-player">
         <audio id="audioPlayer" controls>
-            <source src="不问别离.mp3" type="audio/mpeg">
-            <source src="人间惊鸿客.mp3" type="audio/mpeg">
-            <source src="半壶纱.mp3" type="audio/mpeg">
-           <source src="天下.mp3" type="audio/mpeg">
-           <source src="晚夜微雨问海棠.mp3" type="audio/mpeg">
-           <source src="精卫.mp3" type="audio/mpeg">
+            <source src="musics/不问别离.mp3" type="audio/mpeg">
+            <source src="musics/人间惊鸿客.mp3" type="audio/mpeg">
+            <source src="musics/半壶纱.mp3" type="audio/mpeg">
+            <source src="musics/天下.mp3" type="audio/mpeg">
+            <source src="musics/晚夜微雨问海棠.mp3" type="audio/mpeg">
+            <source src="musics/精卫.mp3" type="audio/mpeg">
             您的浏览器不支持 audio 元素。
         </audio>
         <div class="controls">
@@ -152,25 +166,25 @@
         <p>这是一首非常好听的歌曲，由著名歌手演唱，收录在最新的专辑中。</p>
     </div>
 
-     <script>
+    <script>
         const tracks = [{
             title: "不问别离",
-            file: "不问别离.mp3"
+            file: "musics/不问别离.mp3"
         }, {
             title: "人间惊鸿客",
-            file: "人间惊鸿客.mp3"
+            file: "musics/人间惊鸿客.mp3"
         }, {
             title: "半壶纱",
-            file: "半壶纱.mp3"
+            file: "musics/半壶纱.mp3"
         }, {
             title: "天下",
-            file: "天下.mp3"
+            file: "musics/天下.mp3"
         }, {
             title: "晚夜微雨问海棠",
-            file: "晚夜微雨问海棠.mp3"
+            file: "musics/晚夜微雨问海棠.mp3"
         }, {
             title: "精卫",
-            file: "精卫.mp3"
+            file: "musics/精卫.mp3"
         }];
         let currentTrackIndex = 0;
         let isPlaying = false;
@@ -183,6 +197,8 @@
             audioPlayer.src = tracks[index].file;
             trackTitle.textContent = tracks[index].title;
             currentTrackIndex = index;
+            isPlaying = false;
+            playButton.textContent = 'Play';
         }
 
         function nextTrack() {
@@ -191,28 +207,26 @@
                 randomIndex = Math.floor(Math.random() * tracks.length);
             }
             loadTrack(randomIndex);
-            audioPlayer.play();
+            togglePlay();
         }
 
         function previousTrack() {
             if (currentTrackIndex > 0) {
                 loadTrack(currentTrackIndex - 1);
-                audioPlayer.play();
             } else {
                 loadTrack(tracks.length - 1);
-                audioPlayer.play();
             }
+            togglePlay();
         }
 
         function togglePlay() {
             if (isPlaying) {
                 audioPlayer.pause();
-                playButton.textContent = 'Play';
             } else {
                 audioPlayer.play();
-                playButton.textContent = 'Pause';
             }
             isPlaying = !isPlaying;
+            updatePlayButton();
         }
 
         audioPlayer.addEventListener('timeupdate', function() {
@@ -252,7 +266,24 @@
         function isRefresh() {
             // 检查performance.navigation类型
             return performance.navigation.type === 1;
-        };
+        }
+
+        // 添加播放和暂停事件监听器
+        audioPlayer.addEventListener('play', function() {
+            updatePlayButton();
+        });
+
+        audioPlayer.addEventListener('pause', function() {
+            updatePlayButton();
+        });
+
+        function updatePlayButton() {
+            if (isPlaying) {
+                playButton.textContent = 'Pause';
+            } else {
+                playButton.textContent = 'Play';
+            }
+        }
     </script>
 </body>
 
